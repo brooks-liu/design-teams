@@ -34,10 +34,19 @@ def analyze_prediction(ticker, start_date, end_training_date, start_date_predict
     initial_value = ts_training[-1]
     differences = [ts_prediction[i] - ts_actual[i] for i in range(len(ts_prediction))]
     
-    return [differences, initial_value, ts_prediction]
+    return [differences, initial_value, [value for value in ts_actual.values]]
 
-def compare_to_no_prediction(initial_value, differences, actual_values):
-    length = len(differences)
+def compare_to_no_prediction(differences, initial_value, actual_values):
+    if len(differences) != len(actual_values):
+        print("Please input values for the same time period")
+        return None
+    
+    accuracy = []
+
+    for i in range(len(differences)):
+        accuracy.append(abs(actual_values[i] - initial_value) - abs(differences[i]))
+    
+    return accuracy
 
 
 
@@ -50,4 +59,9 @@ if __name__ == "__main__":
     stock_data = yf.download(tickers, start='2023-10-01', end='2024-07-17', interval='1d')
     
     diff = analyze_prediction('GOOG', '2023-10-01', '2024-07-02', '2024-07-02', '2024-07-17', 10, '1d', stock_data)
-    print(diff)
+    # print(diff)
+    # print(type(diff[2]))
+
+    accuracy = compare_to_no_prediction(diff[0], diff[1], diff[2])
+    print(accuracy)
+
