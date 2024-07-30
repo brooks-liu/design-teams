@@ -7,9 +7,12 @@ import yfinance as yf
 import pandas as pd
 import math
 
+# https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.pct_change.html
+
+
 def analyze_prediction(ticker, start_date, end_training_date, start_date_prediction, end_date, forecast_period, interval, stock_data):
     '''will analyze how well the prediction fares against the actual stock closing price, it assumes that you give it the correct 
-    forecast end/actual end'''
+    forecast end/actual end, start_date_prediction and end_training_date are the same'''
     # calculate the model order first
     pacf_order, pacf = pa.create_pacf(ticker, start_date, end_training_date, interval)
     acf_order, acf = pa.create_acf(ticker, start_date, end_training_date, interval)
@@ -17,6 +20,8 @@ def analyze_prediction(ticker, start_date, end_training_date, start_date_predict
 
     # do the prediction
     ts_training = pd.Series(stock_data['Adj Close'][ticker][start_date : end_training_date])
+    
+    ts_training.index = pd.DatetimeIndex(ts_training.index).to_period('D')
 
     ts_actual = pd.Series(stock_data['Adj Close'][ticker][start_date_prediction : end_date])
     ts_prediction = pa.custom_model(ts_training, order, forecast_period)
@@ -27,9 +32,12 @@ def analyze_prediction(ticker, start_date, end_training_date, start_date_predict
     print(type(ts_actual))
 
     initial_value = ts_training[-1]
-    differences = [ts_prediction[i].values[5:] - ts_actual[i].values[5:] for i in range(len(ts_prediction))]
+    differences = [ts_prediction[i] - ts_actual[i] for i in range(len(ts_prediction))]
     
-    # return differences
+    return [differences, initial_value, ts_prediction]
+
+def compare_to_no_prediction(initial_value, differences, actual_values):
+    length = len(differences)
 
 
 
