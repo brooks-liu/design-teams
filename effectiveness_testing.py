@@ -6,6 +6,7 @@ import pacf_acf_calculator as pa
 import yfinance as yf
 import pandas as pd
 import math
+import statistics as st
 
 # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.pct_change.html
 
@@ -29,7 +30,7 @@ def analyze_prediction(ticker, start_date, end_training_date, start_date_predict
     # make sure the lengths are the same
     # print(len(ts_actual))
     # print(len(ts_prediction))
-    print(type(ts_actual))
+    # print(type(ts_actual))
 
     initial_value = ts_training[-1]
     differences = [ts_prediction[i] - ts_actual[i] for i in range(len(ts_prediction))]
@@ -55,6 +56,9 @@ if __name__ == "__main__":
     tables = pd.read_html(url)
     df = tables[0]
     tickers = df['Symbol'].tolist()
+
+    tickers.remove('BF.B')
+    tickers.remove('BRK.B')
     
     stock_data = yf.download(tickers, start='2023-10-01', end='2024-07-17', interval='1d')
     
@@ -64,4 +68,16 @@ if __name__ == "__main__":
 
     accuracy = compare_to_no_prediction(diff[0], diff[1], diff[2])
     print(accuracy)
+
+    store_accuracy = []
+
+    for ticker in tickers:
+        diff = analyze_prediction(ticker, '2023-10-01', '2024-07-02', '2024-07-02', '2024-07-17', 10, '1d', stock_data)
+        accuracy = compare_to_no_prediction(diff[0], diff[1], diff[2])
+        store_accuracy.append((ticker, accuracy))
+    
+    mean_percent = st.mean([accuracy[1] for accuracy in store_accuracy])
+    print(mean_percent)
+
+    
 

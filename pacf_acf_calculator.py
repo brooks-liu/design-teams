@@ -46,10 +46,6 @@ def create_acf(ticker, startdate, enddate, interval):
             order += 1
     return order, acf_values
 
-    
-def best_arima_order(pacf, acf, integral):
-    pass
-
 def custom_model(data, order, periods):
 
     # data is a numpy array of data like stock price, it usually has a time index
