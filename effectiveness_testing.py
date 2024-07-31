@@ -1,4 +1,5 @@
 '''Some testing: 
+Note that if a stock throws an error in calculating acf/pacf we just use (0, 1, 0) as the prediction
 From 2023-10-01 to 2024-07-02 as training data, 2024-07-02 to 2024-07-17 as the ten day prediction,  '''
 
 import pacf_acf_calculator as pa
@@ -74,13 +75,25 @@ if __name__ == "__main__":
 
     store_accuracy = []
 
+    # tickers1 = ['AAPL', 'GOOG', 'NVDA', 'KO']
+    data = []
+
     for ticker in tickers:
         diff = analyze_prediction(ticker, '2023-10-01', '2024-07-02', '2024-07-02', '2024-07-17', 10, '1d', stock_data)
         accuracy = compare_to_no_prediction(diff[0], diff[1], diff[2])
         store_accuracy.append((ticker, accuracy))
+        data.extend(accuracy)
     
-    mean_percent = st.mean([accuracy[1] for accuracy in store_accuracy])
+    # print("done")
+
+    # print(type(data[0]))
+
+    mean_percent = st.mean(data)
+    max = max(data)
+    min = min(data)
     print(mean_percent)
+    print(max)
+    print(min)
 
     
 
