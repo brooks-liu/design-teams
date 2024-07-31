@@ -16,6 +16,8 @@ def create_pacf(ticker, startdate, enddate, interval):
     #print(values)
 
     size = close_price.size
+    if size == 0:
+        return 0, 0
     significance = 1.96/math.sqrt(size)
 
     pacf_values = sm.tsa.stattools.pacf(values, nlags=20, method='yw')
@@ -36,6 +38,9 @@ def create_acf(ticker, startdate, enddate, interval):
     #print(values)
 
     size = close_price.size
+
+    if size == 0:
+        return 0, 0
     significance = 1.96/math.sqrt(size)
 
     acf_values, confidence = sm.tsa.stattools.acf(values, nlags=20, alpha=0.05, fft=True)

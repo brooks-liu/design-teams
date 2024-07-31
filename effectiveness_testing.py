@@ -1,6 +1,5 @@
-# I think one last thing we should do with your current project though is use the ACF and PACF to run time series predictions on a ton of stocks 
-# and different time lengths and measure its effectiveness, then we can report this all in the Notion and label the project finished
-# ut divide it by the starting price of the prediction so that the difference is scaled properly
+'''Some testing: 
+From 2023-10-01 to 2024-07-02 as training data, 2024-07-02 to 2024-07-17 as the ten day prediction,  '''
 
 import pacf_acf_calculator as pa
 import yfinance as yf
