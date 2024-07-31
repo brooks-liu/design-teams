@@ -1,5 +1,5 @@
 '''Some testing: 
-Note that if a stock throws an error in calculating acf/pacf we just use (0, 1, 0) as the prediction
+Note that if a stock throws an error in calculating acf/pacf we just use (1, 1, 1) as the prediction (the base ARIMA order)
 From 2023-10-01 to 2024-07-02 as training data, 2024-07-02 to 2024-07-17 as the ten day prediction,  '''
 
 import pacf_acf_calculator as pa
@@ -63,10 +63,17 @@ if __name__ == "__main__":
 
     tickers.remove('BF.B')
     tickers.remove('BRK.B')
+
+    prediction_length = 10
     
     stock_data = yf.download(tickers, start='2023-10-01', end='2024-07-17', interval='1d')
+    test_length = pd.Series(stock_data['Adj Close']['AAPL']['2024-07-02' : '2024-07-17'])
+
+    if len(test_length) != prediction_length:
+        print(f"Prediction is {prediction_length - test_length} days off")
+        exit()
     
-    diff = analyze_prediction('GOOG', '2023-10-01', '2024-07-02', '2024-07-02', '2024-07-17', 10, '1d', stock_data)
+    diff = analyze_prediction('GOOG', '2023-10-01', '2024-07-02', '2024-07-02', '2024-07-17', prediction_length, '1d', stock_data)
     # print(diff)
     # print(type(diff[2]))
 
@@ -88,6 +95,7 @@ if __name__ == "__main__":
 
     # print(type(data[0]))
 
+    print(data)
     mean_percent = st.mean(data)
     max = max(data)
     min = min(data)
