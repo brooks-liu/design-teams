@@ -8,6 +8,11 @@ import pandas as pd
 import math
 import statistics as st
 
+# to ignore warnings i was getting:
+import warnings
+from statsmodels.tools.sm_exceptions import ConvergenceWarning
+warnings.simplefilter('ignore', ConvergenceWarning)
+
 # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.pct_change.html
 
 
@@ -32,8 +37,8 @@ def analyze_prediction(ticker, start_date, end_training_date, start_date_predict
     # print(len(ts_prediction))
     # print(type(ts_actual))
 
-    initial_value = ts_training[-1]
-    differences = [ts_prediction[i] - ts_actual[i] for i in range(len(ts_prediction))]
+    initial_value = ts_training.iloc[-1]
+    differences = [ts_prediction.iloc[i] - ts_actual.iloc[i] for i in range(len(ts_prediction))]
     
     return [differences, initial_value, [value for value in ts_actual.values]]
 
@@ -47,8 +52,7 @@ def compare_to_no_prediction(differences, initial_value, actual_values):
     for i in range(len(differences)):
         accuracy.append(abs(actual_values[i] - initial_value) - abs(differences[i]))
     
-    return accuracy
-
+    return accuracy/initial_value * 100
 
 
 if __name__ == "__main__":
@@ -66,8 +70,8 @@ if __name__ == "__main__":
     # print(diff)
     # print(type(diff[2]))
 
-    accuracy = compare_to_no_prediction(diff[0], diff[1], diff[2])
-    print(accuracy)
+    # accuracy = compare_to_no_prediction(diff[0], diff[1], diff[2])
+    # print(accuracy)
 
     store_accuracy = []
 
